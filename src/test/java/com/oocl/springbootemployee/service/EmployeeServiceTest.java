@@ -81,18 +81,16 @@ class EmployeeServiceTest {
         assertThrows(EmployeeAgeNotValidException.class, () -> employeeService.create(kitty));
         verify(employeeRepository, never()).save(any());
     }
-//
-//    @Test
-//    void should_created_employee_active_when_create_employee() {
-//        //given
-//        EmployeeInMemoryRepository mockedEmployeeInMemoryRepository = mock(EmployeeInMemoryRepository.class);
-//        EmployeeService employeeService = new EmployeeService(mockedEmployeeInMemoryRepository);
-//        Employee lucy = new Employee(1, "Lucy", 18, Gender.FEMALE, 8000.0);
-//        //when
-//        employeeService.create(lucy);
-//        /* then */
-//        verify(mockedEmployeeInMemoryRepository).create(argThat(Employee::getActive));
-//    }
+
+    @Test
+    void should_created_employee_active_when_create_employee() {
+        //given
+        Employee lucy = new Employee(1, "Lucy", 18, Gender.FEMALE, 8000.0);
+        //when
+        employeeService.create(lucy);
+        /* then */
+        verify(employeeRepository).save(argThat(Employee::getActive));
+    }
 //
 //    @Test
 //    void should_throw_EmployeeAgeSalaryNotMatchedException_when_save_given_a_employee_with_age_over_30_and_salary_below_20K() {
