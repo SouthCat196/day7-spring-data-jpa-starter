@@ -49,10 +49,10 @@ public class EmployeeService {
 
     public Employee update(Integer employeeId, Employee employee) {
         Optional<Employee> employeeExisted = employeeRepository.findById(employeeId);
-        if (!employeeExisted.get().getActive())
+        if (Boolean.FALSE.equals(employeeExisted.get().getActive())){
             throw new EmployeeInactiveException();
+        }
 
-        employee.setId(employeeId);
         return employeeRepository.save(employee);
     }
 
