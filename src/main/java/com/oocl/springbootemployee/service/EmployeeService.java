@@ -46,7 +46,7 @@ public class EmployeeService {
             throw new EmployeeAgeSalaryNotMatchedException();
 
         employee.setActive(true);
-        return employeeInMemoryRepository.create(employee);
+        return employeeRepository.save(employee);
     }
 
     public Employee update(Integer employeeId, Employee employee) {
