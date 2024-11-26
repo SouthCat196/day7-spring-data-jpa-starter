@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -179,18 +180,16 @@ class EmployeeControllerTest {
     @Test
     void should_remove_employee_success() throws Exception {
         // Given
-        int givenId = 1;
+        Employee employee = employeeRepository.findAll().get(0);
 
         // When
         // Then
-        client.perform(MockMvcRequestBuilders.delete("/employees/" + givenId))
+        client.perform(MockMvcRequestBuilders.delete("/employees/" + employee.getId()))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
-        List<Employee> employees = employeeInMemoryRepository.findAll();
+        List<Employee> employees = employeeRepository.findAll();
         assertThat(employees).hasSize(4);
-        assertThat(employees.get(0).getId()).isEqualTo(2);
-        assertThat(employees.get(1).getId()).isEqualTo(3);
-        assertThat(employees.get(2).getId()).isEqualTo(4);
-        assertThat(employees.get(3).getId()).isEqualTo(5);
+        assertFalse(employeeRepository.findById(employee.getId()).isPresent());
+
     }
 
     @Test
