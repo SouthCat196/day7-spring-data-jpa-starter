@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
@@ -100,25 +99,14 @@ class EmployeeControllerTest {
     @Test
     void should_return_employees_when_get_by_gender() throws Exception {
         // Given
-        Employee femaleEmployee = employeeInMemoryRepository.findAll().get(1);
-        Employee femaleEmployee2 = employeeInMemoryRepository.findAll().get(3);
-
+        List<Employee> femaleEmployee = employeeRepository.getAllByGender(Gender.FEMALE);
         // When
         // Then
         client.perform(MockMvcRequestBuilders.get("/employees")
                         .param("gender", "FEMALE"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].id")
-                        .value(containsInAnyOrder(femaleEmployee.getId(), femaleEmployee2.getId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].name")
-                        .value(containsInAnyOrder(femaleEmployee.getName(), femaleEmployee2.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].age")
-                        .value(containsInAnyOrder(femaleEmployee.getAge(), femaleEmployee2.getAge())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender")
-                        .value(containsInAnyOrder(femaleEmployee.getGender().name(), femaleEmployee2.getGender().name())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].salary")
-                        .value(containsInAnyOrder(femaleEmployee.getSalary(), femaleEmployee2.getSalary())));
+                .andExpect(MockMvcResultMatchers.content().json(employeesJacksonTester.write(femaleEmployee).getJson()));
+
     }
 
     @Test

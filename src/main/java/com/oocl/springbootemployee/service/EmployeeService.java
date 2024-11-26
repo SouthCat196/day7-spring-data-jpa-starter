@@ -29,7 +29,7 @@ public class EmployeeService {
     }
 
     public List<Employee> findAll(Gender gender) {
-        return employeeInMemoryRepository.findAllByGender(gender);
+        return employeeRepository.getAllByGender(gender);
     }
 
     public List<Employee> findAll(Integer page, Integer pageSize) {
