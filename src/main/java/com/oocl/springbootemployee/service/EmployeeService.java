@@ -10,6 +10,7 @@ import com.oocl.springbootemployee.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -50,11 +51,12 @@ public class EmployeeService {
     }
 
     public Employee update(Integer employeeId, Employee employee) {
-        Employee employeeExisted = employeeInMemoryRepository.findById(employeeId);
-        if (!employeeExisted.getActive())
+        Optional<Employee> employeeExisted = employeeRepository.findById(employeeId);
+        if (!employeeExisted.get().getActive())
             throw new EmployeeInactiveException();
 
-        return employeeInMemoryRepository.update(employeeId, employee);
+        employee.setId(employeeId);
+        return employeeRepository.save(employee);
     }
 
     public void delete(Integer employeeId) {
