@@ -1,9 +1,15 @@
 package com.oocl.springbootemployee.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private Integer age;
+    @Enumerated(EnumType.STRING)
     private Gender gender;
     private Double salary;
     private Boolean isActive = true;
