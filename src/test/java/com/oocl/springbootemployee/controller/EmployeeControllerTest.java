@@ -36,6 +36,9 @@ class EmployeeControllerTest {
     private EmployeeRepository employeeRepository;
 
     @Autowired
+    private JacksonTester<Employee> employeeJacksonTester;
+
+    @Autowired
     private JacksonTester<List<Employee>> employeesJacksonTester;
 
     @BeforeEach
@@ -148,39 +151,29 @@ class EmployeeControllerTest {
     @Test
     void should_update_employee_success() throws Exception {
         // Given
-        Integer givenId = 1;
-        String givenName = "New Employee";
-        Integer givenAge = 30;
-        Gender givenGender = Gender.FEMALE;
-        Double givenSalary = 5432.0;
-        String givenEmployee = String.format(
-                "{\"id\": %s, \"name\": \"%s\", \"age\": \"%s\", \"gender\": \"%s\", \"salary\": \"%s\"}",
-                givenId,
-                givenName,
-                givenAge,
-                givenGender,
-                givenSalary
-        );
+        final Employee givenEmployee = employeeRepository.findAll().get(0);
+        givenEmployee.setSalary(9999999.0);
+        String employeeJson = employeeJacksonTester.write(givenEmployee).getJson();
 
         // When
         // Then
-        client.perform(MockMvcRequestBuilders.put("/employees/" + givenId)
+        client.perform(MockMvcRequestBuilders.put("/employees/" + givenEmployee.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(givenEmployee)
+                        .content(employeeJson)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(givenName))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(givenAge))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(givenGender.name()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(givenSalary));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(givenEmployee.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(givenEmployee.getAge()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(givenEmployee.getGender().name()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(givenEmployee.getSalary()));
         List<Employee> employees = employeeRepository.findAll();
         assertThat(employees).hasSize(5);
-        assertThat(employees.get(0).getId()).isEqualTo(1);
-        assertThat(employees.get(0).getName()).isEqualTo(givenName);
-        assertThat(employees.get(0).getAge()).isEqualTo(givenAge);
-        assertThat(employees.get(0).getGender()).isEqualTo(givenGender);
-        assertThat(employees.get(0).getSalary()).isEqualTo(givenSalary);
+        assertThat(employees.get(0).getId()).isEqualTo(givenEmployee.getId());
+        assertThat(employees.get(0).getName()).isEqualTo(givenEmployee.getName());
+        assertThat(employees.get(0).getAge()).isEqualTo(givenEmployee.getAge());
+        assertThat(employees.get(0).getGender()).isEqualTo(givenEmployee.getGender());
+        assertThat(employees.get(0).getSalary()).isEqualTo(givenEmployee.getSalary());
     }
 
     @Test
