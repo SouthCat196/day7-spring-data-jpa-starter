@@ -1,11 +1,18 @@
 package com.oocl.springbootemployee.model;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Company {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "companyId")
     private List<Employee> employees = new ArrayList<>();
 
     public Company(Integer id, String name, List<Employee> employees) {
@@ -19,7 +26,8 @@ public class Company {
         this.name = name;
     }
 
-    public Company() {}
+    public Company() {
+    }
 
     public Company(String name) {
         this.name = name;
